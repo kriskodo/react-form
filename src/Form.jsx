@@ -58,7 +58,7 @@ function Form({ pages, onSubmit }) {
     <AppContext.Provider value={context}>
       <form onSubmit={handleSubmit} className="form">
         {Object.keys(state)
-          .map((pageNumber, idx) => idx + 1 === currentPageNumber && (
+          .map((pageNumber, idx) => pageNumber === currentPageNumber && (
             <FormPage
               key={`${currentPageNumber}-page`}
               pageNumber={pageNumber}
