@@ -17,11 +17,11 @@ const validator = (state) => {
 
       passwordValue = Object.keys(state[page]).find(inputName);
 
-      if (passwordValue) break;
+      if (passwordValue) 
+        return value === passwordValue;
     }
-
-    return value === passwordValue;
   };
+  
   const email = () => (value) => /^\S+@\S+\.\S+$/.test(value);
   const validAddress = () => (value) => !!value;
   const phoneNumber = () => (value) => !!value;

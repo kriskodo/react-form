@@ -31,6 +31,7 @@ function FormPage({
       <div>
         {Object.values(state[pageNumber]).map((input) => (
           <FormInput
+             /** TODO: Destructure properly */
             key={input.props.name}
             id={input.props.name}
             value={input.value}
