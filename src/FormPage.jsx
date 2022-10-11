@@ -1,12 +1,14 @@
-import { v4 as uuidv4 } from 'uuid';
+import { useContext } from 'react';
 import FormInput from './FormInput';
+import AppContext from './context/context';
 
 function FormPage({
-  pageNumber, totalPages, title, inputs, nextPage, prevPage, onChange,
+  pageNumber,
+  title,
 }) {
-  const handleChange = (e) => {
-    onChange(e, pageNumber);
-  };
+  const {
+    totalPages, prevPage, nextPage, state,
+  } = useContext(AppContext);
 
   const submitBtn = +pageNumber === +totalPages ? (
     <input type="submit" value="submit" />
@@ -27,13 +29,12 @@ function FormPage({
         {totalPages}
       </div>
       <div>
-        {Object.values(inputs).map((input, idx) => (
+        {Object.values(state[pageNumber]).map((input) => (
           <FormInput
-            key={uuidv4()}
-            id={idx + Math.random() + Math.random()}
-            data={input}
+            key={input.props.name}
+            id={input.props.name}
+            value={input.value}
             {...input.props}
-            onChange={handleChange}
           />
         ))}
       </div>

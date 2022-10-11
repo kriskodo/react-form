@@ -1,27 +1,40 @@
 import './styles.css';
+import { useContext } from 'react';
+import AppContext from './context/context';
 
 function FormInput({
-  id, type, data, onChange,
+  id,
+  type,
+  name,
+  value,
 }) {
-  console.log(type);
+  const { onChange, onBlur, currentPageNumber } = useContext(AppContext);
+
   return (
     <div className="form__input">
       <div className="form__label-wrapper">
-        <label htmlFor={id}>{data.props.name}</label>
+        <label htmlFor={id}>{name}</label>
       </div>
 
       {type !== 'country' && (
         <input
           id={id}
-          name={data.props.name}
-          value={data.props.value}
-          onChange={onChange}
+          name={name}
           type={type}
+          value={value}
+          onChange={(e) => onChange(e, currentPageNumber)}
+          onBlur={onBlur}
         />
       )}
 
       {type === 'country' && (
-        <select id="country" name={data.props.name}>
+        <select
+          id="country"
+          name={name}
+          value={value}
+          onChange={(e) => onChange(e, currentPageNumber)}
+        >
+          <option value="Afghanistan">Choose...</option>
           <option value="Afghanistan">Afghanistan</option>
           <option value="Åland Islands">Åland Islands</option>
           <option value="Albania">Albania</option>

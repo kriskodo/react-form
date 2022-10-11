@@ -1,41 +1,32 @@
 import { v4 as uuidv4 } from 'uuid';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import FormPage from './FormPage';
+import AppContext from './context/context';
 import './styles.css';
+import adaptInputName from './utils/adaptInputName';
+import adaptPages from './utils/adaptInputPages';
 
 function Form({ pages, onSubmit }) {
-  /*
-    * //TODO: Turn this into hook.
-*/
-  const adaptedPages = pages.reduce((acc, val, idx) => {
-    const currentPage = idx + 1;
-    acc[currentPage] = {};
-
-    val.props.inputs.forEach((input) => {
-      const adaptedName = input.props.name.toLowerCase().split(' ').join('_');
-      acc[currentPage][adaptedName] = { props: input.props, value: '' };
-    });
-
-    return acc;
-  }, {});
-  const [state, setState] = useState(adaptedPages);
+  const [state, setState] = useState(adaptPages(pages));
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
 
-  const onChange = (e, pageNumber) => {
-    setState((prevState) => {
-      const previous = { ...prevState };
-      const adaptedPropertyName = e.target.name.toLowerCase()
-        .split(' ')
-        .join('_');
+  const onChange = useCallback((e, pageNumber) => {
+    setState((prevState) => ({
+      ...prevState,
+      [pageNumber]: {
+        ...prevState[pageNumber],
+        [adaptInputName(e.target.name)]: {
+          ...prevState[pageNumber][adaptInputName(e.target.name)],
+          value: e.target.value,
+        },
+      },
+    }));
+  }, []);
 
-      previous[pageNumber][adaptedPropertyName] = {
-        ...prevState[pageNumber][adaptedPropertyName],
-        value: e.target.value,
-      };
-
-      return prevState;
-    });
-  };
+  const onBlur = useCallback((e, pageNumber) => {
+    console.log(e, pageNumber);
+    // TODO: Add validation on blur.
+  }, []);
 
   const nextPage = () => {
     setCurrentPageNumber((page) => page + 1);
@@ -45,27 +36,37 @@ function Form({ pages, onSubmit }) {
     setCurrentPageNumber((page) => page - 1);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = useCallback((e) => {
     e.preventDefault();
     onSubmit(state);
-  };
+  }, [onSubmit, state]);
+
+  const context = useMemo(() => ({
+    state,
+    setState,
+    onBlur,
+    onChange,
+    nextPage,
+    prevPage,
+    currentPageNumber,
+    setCurrentPageNumber,
+    handleSubmit,
+    totalPages: pages.length,
+  }), [currentPageNumber, handleSubmit, onBlur, onChange, pages.length, state]);
 
   return (
-    <form onSubmit={handleSubmit} className="form">
-      {Object.keys(state)
-        .map((pageNumber, idx) => idx + 1 === currentPageNumber && (
-          <FormPage
-            key={uuidv4()}
-            totalPages={pages.length}
-            pageNumber={pageNumber}
-            inputs={state[pageNumber]}
-            {...pages[idx].props}
-            nextPage={nextPage}
-            prevPage={prevPage}
-            onChange={onChange}
-          />
-        ))}
-    </form>
+    <AppContext.Provider value={context}>
+      <form onSubmit={handleSubmit} className="form">
+        {Object.keys(state)
+          .map((pageNumber, idx) => idx + 1 === currentPageNumber && (
+            <FormPage
+              key={`${currentPageNumber}-page`}
+              pageNumber={pageNumber}
+              {...state[idx]}
+            />
+          ))}
+      </form>
+    </AppContext.Provider>
   );
 }
 
