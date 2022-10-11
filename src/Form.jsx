@@ -22,10 +22,16 @@ function Form({ pages, onSubmit }) {
     }));
   }, []);
 
-  const onBlur = useCallback((e, pageNumber) => {
-    console.log(e, pageNumber);
-    // TODO: Add validation on blur.
-  }, []);
+  const onBlur = useCallback((e, validations) => {
+    validations.forEach((validation) => {
+      if (e.target.name === 'Repeat Password') {
+        console.log(validation(e.target.value, state));
+        return;
+      }
+
+      console.log(validation(e.target.value));
+    });
+  }, [state]);
 
   const nextPage = () => {
     setCurrentPageNumber((page) => page + 1);
@@ -57,11 +63,11 @@ function Form({ pages, onSubmit }) {
     <AppContext.Provider value={context}>
       <form onSubmit={handleSubmit} className="form">
         {Object.keys(state)
-          .map((pageNumber, idx) => pageNumber === currentPageNumber && (
+          .map((pageNumber) => +pageNumber === currentPageNumber && (
             <FormPage
               key={`${currentPageNumber}-page`}
               pageNumber={pageNumber}
-              {...state[idx]}
+              {...state[pageNumber]}
             />
           ))}
       </form>

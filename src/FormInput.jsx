@@ -7,6 +7,7 @@ function FormInput({
   type,
   name,
   value,
+  validations,
 }) {
   const { onChange, onBlur, currentPageNumber } = useContext(AppContext);
 
@@ -23,7 +24,7 @@ function FormInput({
           type={type}
           value={value}
           onChange={(e) => onChange(e, currentPageNumber)}
-          onBlur={onBlur}
+          onBlur={(e) => onBlur(e, validations)}
         />
       )}
 
