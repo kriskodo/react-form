@@ -11,12 +11,12 @@ function FormInput({
   validations,
 }) {
   const {
-    state, setState, setErrors, currentPageNumber,
+    pages, setPages, setErrors, currentPageNumber,
   } = useContext(AppContext);
 
   const { onChange, validate } = useValidation(
-    state,
-    setState,
+    pages,
+    setPages,
     setErrors,
     validations,
     currentPageNumber,
@@ -35,6 +35,7 @@ function FormInput({
           type={type}
           value={value}
           onChange={(e) => onChange(e)}
+          onBlur={validate}
         />
       )}
 

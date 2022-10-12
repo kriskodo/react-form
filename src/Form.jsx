@@ -4,8 +4,8 @@ import AppContext from './context/context';
 import './styles.css';
 import adaptPages from './utils/adaptInputPages';
 
-function Form({ pages, onSubmit }) {
-  const [state, setState] = useState(adaptPages(pages));
+function Form({ pages: formPages, onSubmit }) {
+  const [pages, setPages] = useState(adaptPages(formPages));
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [errors, setErrors] = useState([]);
 
@@ -17,40 +17,35 @@ function Form({ pages, onSubmit }) {
     setCurrentPageNumber((page) => page - 1);
   }, []);
 
-  const handleSubmit = useCallback((e) => {
-    e.preventDefault();
-    onSubmit(state);
-  }, [onSubmit, state]);
-
   const context = useMemo(() => ({
-    state,
-    setState,
+    pages,
+    setPages,
     errors,
+    totalPages: formPages.length,
     setErrors,
     currentPageNumber,
     setCurrentPageNumber,
-    totalPages: pages.length,
     prevPage,
     nextPage,
-    handleSubmit,
-  }), [currentPageNumber, errors, handleSubmit, nextPage, pages.length, prevPage, state]);
+    handleSubmit: onSubmit,
+  }), [pages, errors, formPages.length, currentPageNumber, prevPage, nextPage, onSubmit]);
 
   return (
     <AppContext.Provider value={context}>
-      <form onSubmit={handleSubmit} className="form">
+      <form onSubmit={onSubmit} className="form">
         <div className="form__errors">
           {errors.map((error, idx) => (
             <div className="form__error" key={`error-${idx + Math.random()}`}>
-              {error}
+              <p>{error}</p>
             </div>
           ))}
         </div>
-        {Object.keys(state)
+        {Object.keys(pages)
           .map((pageNumber) => +pageNumber === currentPageNumber && (
             <FormPage
               key={`${pageNumber}-page`}
               pageNumber={pageNumber}
-              title={pages[pageNumber - 1].props.title}
+              title={formPages[pageNumber - 1].props.title}
             />
           ))}
       </form>

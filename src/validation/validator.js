@@ -1,12 +1,12 @@
 import adaptInputName from '../utils/adaptInputName';
 
 const getOriginalInputName = (value) => value.split('_')
-  .map((str) => str[0].toUpperCase() + str.slice(1));
+  .map((str) => str[0].toUpperCase() + str.slice(1)).join(' ');
 
 const validator = () => {
   const required = () => (target) => ({
     valid: target.value.length > 0,
-    message: `Required field. ${getOriginalInputName(target.name)}`,
+    message: `${getOriginalInputName(target.name)} is required.`,
   });
 
   const minLength = (length) => (target) => (

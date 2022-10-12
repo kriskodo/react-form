@@ -2,34 +2,35 @@ import { useContext } from 'react';
 import FormInput from './FormInput';
 import AppContext from './context/context';
 import validatePage from './validation/validatePage';
+import adaptResultPages from './utils/adaptResultPages';
 
 function FormPage({
   pageNumber,
   title,
 }) {
   const {
-    totalPages, prevPage, nextPage, state, setErrors, handleSubmit,
+    pages, prevPage, nextPage, errors, setErrors, handleSubmit, totalPages,
   } = useContext(AppContext);
 
   const validateSubmit = (e) => {
     e.preventDefault();
-    const foundErrors = validatePage(state, pageNumber);
+    const foundErrors = validatePage(pages, pageNumber, errors);
 
-    if (foundErrors.length === 0) return handleSubmit(state);
+    if (foundErrors.length === 0) return handleSubmit(adaptResultPages(pages));
 
     return setErrors(foundErrors);
   };
 
   const validateNext = () => {
-    const foundErrors = validatePage(state, pageNumber);
+    const foundErrors = validatePage(pages, pageNumber, errors);
 
     if (foundErrors.length === 0) return nextPage();
 
     return setErrors(foundErrors);
   };
 
-  const submitBtn = +pageNumber === +totalPages ? (
-    <input type="submit" value="submit" onSubmit={validateSubmit} />
+  const submitBtn = +pageNumber === totalPages ? (
+    <input type="submit" value="submit" onClick={validateSubmit} />
   ) : (
     <input type="button" value="next" onClick={validateNext} />
   );
@@ -47,11 +48,10 @@ function FormPage({
         {totalPages}
       </div>
       <div>
-        {Object.values(state[pageNumber]).map((input) => (
+        {Object.values(pages[pageNumber]).map((input) => (
           <FormInput
               /** TODO: Destructure properly */
             key={input.props.name}
-            id={input.props.name}
             value={input.value}
             {...input.props}
           />

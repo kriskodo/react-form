@@ -1,3 +1,11 @@
+*,
+*:before,
+*:after {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
@@ -48,4 +56,9 @@
 
 .form__input--error {
   border: 2px solid #e31717;
+}
+
+.form__error p {
+  background-color: #e31717;
+  color: #fff;
 }

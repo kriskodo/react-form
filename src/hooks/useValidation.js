@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
 import adaptInputName from '../utils/adaptInputName';
 
-const useValidation = (state, setState, setErrors, validations, currentPageNumber) => {
+const useValidation = (pages, setPages, setErrors, validations, currentPageNumber) => {
   const validate = useCallback((e) => {
+    setErrors([]);
     validations.forEach((validation) => {
       if (e.target.name === 'Repeat Password') {
-        const validationResult = validation(e.target, state);
+        const validationResult = validation(e.target, pages);
         if (!validationResult.valid) {
           e.target.classList.add('form__input--error');
           setErrors((prevErrors) => [...prevErrors, validationResult.message]);
@@ -35,22 +36,20 @@ const useValidation = (state, setState, setErrors, validations, currentPageNumbe
         e.target.classList.remove('form__input--error');
       }
     });
-  }, [setErrors, state, validations]);
+  }, [setErrors, pages, validations]);
 
   const onChange = useCallback((e) => {
-    setState((prevState) => ({
-      ...prevState,
+    setPages((prevPages) => ({
+      ...prevPages,
       [currentPageNumber]: {
-        ...prevState[currentPageNumber],
+        ...prevPages[currentPageNumber],
         [adaptInputName(e.target.name)]: {
-          ...prevState[currentPageNumber][adaptInputName(e.target.name)],
+          ...prevPages[currentPageNumber][adaptInputName(e.target.name)],
           value: e.target.value,
         },
       },
     }));
-
-    validate(e);
-  }, [currentPageNumber, setState, validate]);
+  }, [currentPageNumber, setPages]);
 
   return {
     onChange,
