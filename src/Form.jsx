@@ -2,44 +2,20 @@ import { useCallback, useMemo, useState } from 'react';
 import FormPage from './FormPage';
 import AppContext from './context/context';
 import './styles.css';
-import adaptInputName from './utils/adaptInputName';
 import adaptPages from './utils/adaptInputPages';
 
 function Form({ pages, onSubmit }) {
   const [state, setState] = useState(adaptPages(pages));
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
+  const [errors, setErrors] = useState([]);
 
-  const onChange = useCallback((e, pageNumber) => {
-    setState((prevState) => ({
-      ...prevState,
-      [pageNumber]: {
-        ...prevState[pageNumber],
-        [adaptInputName(e.target.name)]: {
-          ...prevState[pageNumber][adaptInputName(e.target.name)],
-          value: e.target.value,
-        },
-      },
-    }));
+  const nextPage = useCallback(() => {
+    setCurrentPageNumber((page) => page + 1);
   }, []);
 
-  const onBlur = useCallback((e, validations) => {
-    validations.forEach((validation) => {
-      if (e.target.name === 'Repeat Password') {
-        console.log(validation(e.target.value, state));
-        return;
-      }
-
-      console.log(validation(e.target.value));
-    });
-  }, [state]);
-
-  const nextPage = () => {
-    setCurrentPageNumber((page) => page + 1);
-  };
-
-  const prevPage = () => {
+  const prevPage = useCallback(() => {
     setCurrentPageNumber((page) => page - 1);
-  };
+  }, []);
 
   const handleSubmit = useCallback((e) => {
     e.preventDefault();
@@ -49,25 +25,32 @@ function Form({ pages, onSubmit }) {
   const context = useMemo(() => ({
     state,
     setState,
-    onBlur,
-    onChange,
-    nextPage,
-    prevPage,
+    errors,
+    setErrors,
     currentPageNumber,
     setCurrentPageNumber,
-    handleSubmit,
     totalPages: pages.length,
-  }), [currentPageNumber, handleSubmit, onBlur, onChange, pages.length, state]);
+    prevPage,
+    nextPage,
+    handleSubmit,
+  }), [currentPageNumber, errors, handleSubmit, nextPage, pages.length, prevPage, state]);
 
   return (
     <AppContext.Provider value={context}>
       <form onSubmit={handleSubmit} className="form">
+        <div className="form__errors">
+          {errors.map((error, idx) => (
+            <div className="form__error" key={`error-${idx + Math.random()}`}>
+              {error}
+            </div>
+          ))}
+        </div>
         {Object.keys(state)
           .map((pageNumber) => +pageNumber === currentPageNumber && (
             <FormPage
-              key={`${currentPageNumber}-page`}
+              key={`${pageNumber}-page`}
               pageNumber={pageNumber}
-              {...state[pageNumber]}
+              title={pages[pageNumber - 1].props.title}
             />
           ))}
       </form>

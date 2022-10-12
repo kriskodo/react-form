@@ -1,19 +1,37 @@
 import { useContext } from 'react';
 import FormInput from './FormInput';
 import AppContext from './context/context';
+import validatePage from './validation/validatePage';
 
 function FormPage({
   pageNumber,
   title,
 }) {
   const {
-    totalPages, prevPage, nextPage, state,
+    totalPages, prevPage, nextPage, state, setErrors, handleSubmit,
   } = useContext(AppContext);
 
+  const validateSubmit = (e) => {
+    e.preventDefault();
+    const foundErrors = validatePage(state, pageNumber);
+
+    if (foundErrors.length === 0) return handleSubmit(state);
+
+    return setErrors(foundErrors);
+  };
+
+  const validateNext = () => {
+    const foundErrors = validatePage(state, pageNumber);
+
+    if (foundErrors.length === 0) return nextPage();
+
+    return setErrors(foundErrors);
+  };
+
   const submitBtn = +pageNumber === +totalPages ? (
-    <input type="submit" value="submit" />
+    <input type="submit" value="submit" onSubmit={validateSubmit} />
   ) : (
-    <input type="button" value="next" onClick={nextPage} />
+    <input type="button" value="next" onClick={validateNext} />
   );
 
   const backBtn = +pageNumber !== 1 ? (
