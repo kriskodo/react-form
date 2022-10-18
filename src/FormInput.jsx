@@ -30,7 +30,7 @@ function FormInput({
     currentPageNumber,
   );
 
-  console.log(pages[currentPageNumber][adaptInputName(name)]);
+  const { isValid, isVisited } = pages[currentPageNumber][adaptInputName(name)];
 
   return (
     <div className="form__input">
@@ -43,8 +43,8 @@ function FormInput({
               type={type}
               placeholder={name}
               value={value}
-              isValid={pages[currentPageNumber][adaptInputName(name)].isValid}
-              isInvalid={!pages[currentPageNumber][adaptInputName(name)].isValid && pages[currentPageNumber][adaptInputName(name)].isVisited}
+              isValid={isValid}
+              isInvalid={!isValid && isVisited}
               onChange={onChange}
               onBlur={onBlur}
             />
@@ -57,8 +57,8 @@ function FormInput({
             id="country"
             name={name}
             value={value}
-            isValid={pages[currentPageNumber][adaptInputName(name)].isValid}
-            isInvalid={!pages[currentPageNumber][adaptInputName(name)].isValid && pages[currentPageNumber][adaptInputName(name)].isVisited}
+            isValid={isValid}
+            isInvalid={!isValid && isVisited}
             placeholder={name}
             onChange={onChange}
             onBlur={onBlur}
