@@ -4,56 +4,121 @@ import adaptInputName from '../utils/adaptInputName';
 const useValidation = (pages, setPages, setErrors, validations, currentPageNumber) => {
   const validate = useCallback((e) => {
     setErrors([]);
+    const inputNameKey = adaptInputName(e.target.name);
+
     validations.forEach((validation) => {
       if (e.target.name === 'Repeat Password') {
         const validationResult = validation(e.target, pages);
         if (!validationResult.valid) {
-          e.target.classList.add('form__input--error');
+          setPages((prevPages) => ({
+            ...prevPages,
+            [currentPageNumber]: {
+              ...prevPages[currentPageNumber],
+              [inputNameKey]: {
+                ...prevPages[currentPageNumber][inputNameKey],
+                isValid: false,
+              },
+            },
+          }));
+
           setErrors((prevErrors) => [...prevErrors, validationResult.message]);
           return;
         }
+
+        setPages((prevPages) => ({
+          ...prevPages,
+          [currentPageNumber]: {
+            ...prevPages[currentPageNumber],
+            [inputNameKey]: {
+              ...prevPages[currentPageNumber][inputNameKey],
+              isValid: true,
+            },
+          },
+        }));
 
         setErrors((prevErrors) => [
           ...prevErrors.filter(
             (errorMsg) => errorMsg === validationResult.message,
           ),
         ]);
-        e.target.classList.remove('form__input--error');
       } else {
         const validationResult = validation(e.target);
 
         if (!validationResult.valid) {
+          setPages((prevPages) => ({
+            ...prevPages,
+            [currentPageNumber]: {
+              ...prevPages[currentPageNumber],
+              [inputNameKey]: {
+                ...prevPages[currentPageNumber][inputNameKey],
+                isValid: false,
+              },
+            },
+          }));
+
           setErrors((prevErrors) => [...prevErrors, validationResult.message]);
-          e.target.classList.add('form__input--error');
           return;
         }
+
+        setPages((prevPages) => ({
+          ...prevPages,
+          [currentPageNumber]: {
+            ...prevPages[currentPageNumber],
+            [inputNameKey]: {
+              ...prevPages[currentPageNumber][inputNameKey],
+              isValid: true,
+            },
+          },
+        }));
 
         setErrors((prevErrors) => [
           ...prevErrors.filter(
             (errorMsg) => errorMsg === validationResult.message,
           ),
         ]);
-        e.target.classList.remove('form__input--error');
       }
     });
-  }, [setErrors, pages, validations]);
+  }, [setErrors, validations, pages, setPages, currentPageNumber]);
 
-  const onChange = useCallback((e) => {
+  const onBlur = (e) => {
+    const inputNameKey = adaptInputName(e.target.name);
+
     setPages((prevPages) => ({
       ...prevPages,
       [currentPageNumber]: {
         ...prevPages[currentPageNumber],
-        [adaptInputName(e.target.name)]: {
-          ...prevPages[currentPageNumber][adaptInputName(e.target.name)],
+        [inputNameKey]: {
+          ...prevPages[currentPageNumber][inputNameKey],
+          isVisited: true,
+        },
+      },
+    }));
+
+    validate(e);
+  };
+
+  const onChange = useCallback((e) => {
+    const inputNameKey = adaptInputName(e.target.name);
+
+    setPages((prevPages) => ({
+      ...prevPages,
+      [currentPageNumber]: {
+        ...prevPages[currentPageNumber],
+        [inputNameKey]: {
+          ...prevPages[currentPageNumber][inputNameKey],
           value: e.target.value,
         },
       },
     }));
-  }, [currentPageNumber, setPages]);
+
+    if (pages[currentPageNumber][inputNameKey].isVisited) {
+      validate(e);
+    }
+  }, [currentPageNumber, pages, setPages, validate]);
 
   return {
     onChange,
-    validate,
+    onBlur,
   };
 };
 

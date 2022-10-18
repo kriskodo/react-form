@@ -1,11 +1,15 @@
 import { useCallback, useMemo, useState } from 'react';
+// eslint-disable-next-line import/no-named-default
+import { default as BootstrapForm } from 'react-bootstrap/Form';
+import { Alert, Col, Container } from 'react-bootstrap';
+
 import FormPage from './FormPage';
 import AppContext from './context/context';
 import './styles.css';
 import adaptPages from './utils/adaptInputPages';
 
 function Form({ pages: formPages, onSubmit }) {
-  const [pages, setPages] = useState(adaptPages(formPages));
+  const [pages, setPages] = useState(adaptPages([...formPages]));
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [errors, setErrors] = useState([]);
 
@@ -32,23 +36,29 @@ function Form({ pages: formPages, onSubmit }) {
 
   return (
     <AppContext.Provider value={context}>
-      <form onSubmit={onSubmit} className="form">
-        <div className="form__errors">
-          {errors.map((error, idx) => (
-            <div className="form__error" key={`error-${idx + Math.random()}`}>
-              <p>{error}</p>
-            </div>
-          ))}
-        </div>
-        {Object.keys(pages)
-          .map((pageNumber) => +pageNumber === currentPageNumber && (
-            <FormPage
-              key={`${pageNumber}-page`}
-              pageNumber={pageNumber}
-              title={formPages[pageNumber - 1].props.title}
-            />
-          ))}
-      </form>
+      <BootstrapForm onSubmit={onSubmit} className="form">
+        <Container fluid>
+          <div className="form__errors">
+            {errors.map((error, idx) => (
+              <Col key={`error-${idx + Math.random()}`}>
+                <Alert variant="danger">
+                  {error}
+                </Alert>
+              </Col>
+            ))}
+          </div>
+          <div className="form__body">
+            {Object.keys(pages)
+              .map((pageNumber) => +pageNumber === currentPageNumber && (
+                <FormPage
+                  key={`${pageNumber}-page`}
+                  pageNumber={pageNumber}
+                  title={formPages[pageNumber - 1].props.title}
+                />
+              ))}
+          </div>
+        </Container>
+      </BootstrapForm>
     </AppContext.Provider>
   );
 }

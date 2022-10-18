@@ -1,4 +1,6 @@
 import { useContext } from 'react';
+import Form from 'react-bootstrap/Form';
+import { Button } from 'react-bootstrap';
 import FormInput from './FormInput';
 import AppContext from './context/context';
 import validatePage from './validation/validatePage';
@@ -18,7 +20,6 @@ function FormPage({
     setErrors(foundErrors);
 
     return handleSubmit(adaptResultPages(pages));
-
   };
 
   const validateNext = () => {
@@ -38,17 +39,17 @@ function FormPage({
   };
 
   const submitBtn = +pageNumber === totalPages ? (
-    <input type="submit" value="submit" onClick={validateSubmit} />
+    <Button as="input" type="submit" value="Submit" onClick={validateSubmit}/>
   ) : (
-    <input type="button" value="next" onClick={validateNext} />
+    <Button as="input" type="button" value="Next" onClick={validateNext} />
   );
 
   const backBtn = +pageNumber !== 1 ? (
-    <input type="button" value="back" onClick={handlePrevPage} />
+    <Button as="input" type="button" value="Back" onClick={handlePrevPage} style={{ marginRight: '10px' }} />
   ) : '';
 
   return (
-    <div className="form__page">
+    <Form.Group className="form__page">
       <div className="form__page-title">{title}</div>
       <div>
         {pageNumber}
@@ -66,7 +67,7 @@ function FormPage({
       </div>
       {backBtn}
       {submitBtn}
-    </div>
+    </Form.Group>
   );
 }
 

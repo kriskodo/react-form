@@ -7,7 +7,9 @@ const adaptPages = (pagesArray) => pagesArray.reduce((acc, val, idx) => {
   for (let i = 0; i < val.props.inputs.length; i += 1) {
     const input = val.props.inputs[i];
     const adaptedName = adaptInputName(input.props.name);
-    acc[currentPage][adaptedName] = { props: input.props, value: '' };
+    acc[currentPage][adaptedName] = {
+      props: input.props, value: '', isVisited: false, isValid: false,
+    };
   }
 
   return acc;

@@ -50,15 +50,7 @@
 
 .form {
   padding: 20px;
-  margin: 20px;
   border: 2px solid #222;
-}
-
-.form__input--error {
-  border: 2px solid #e31717;
-}
-
-.form__error p {
-  background-color: #e31717;
-  color: #fff;
+  max-width: 600px;
+  margin: 0 auto;
 }
