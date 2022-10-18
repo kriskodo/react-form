@@ -15,18 +15,26 @@ function FormPage({
   const validateSubmit = (e) => {
     e.preventDefault();
     const foundErrors = validatePage(pages, pageNumber, errors);
+    setErrors(foundErrors);
 
-    if (foundErrors.length === 0) return handleSubmit(adaptResultPages(pages));
+    return handleSubmit(adaptResultPages(pages));
 
-    return setErrors(foundErrors);
   };
 
   const validateNext = () => {
     const foundErrors = validatePage(pages, pageNumber, errors);
 
-    if (foundErrors.length === 0) return nextPage();
+    if (foundErrors.length === 0) {
+      setErrors([]);
+      return nextPage();
+    }
 
     return setErrors(foundErrors);
+  };
+
+  const handlePrevPage = () => {
+    setErrors([]);
+    prevPage();
   };
 
   const submitBtn = +pageNumber === totalPages ? (
@@ -36,7 +44,7 @@ function FormPage({
   );
 
   const backBtn = +pageNumber !== 1 ? (
-    <input type="button" value="back" onClick={prevPage} />
+    <input type="button" value="back" onClick={handlePrevPage} />
   ) : '';
 
   return (
@@ -50,7 +58,6 @@ function FormPage({
       <div>
         {Object.values(pages[pageNumber]).map((input) => (
           <FormInput
-              /** TODO: Destructure properly */
             key={input.props.name}
             value={input.value}
             {...input.props}
