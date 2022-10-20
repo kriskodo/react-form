@@ -49,6 +49,48 @@ export default function App() {
         ]}
         onSubmit={handleSubmit}
       />
+
+      <Form
+        pages={[
+          <FormPage inputs={[
+            <FormInput
+              name="Payment amount"
+              type="number"
+              validations={[Validator.required()]}
+            />,
+            <FormInput
+              name="Address"
+              type="text"
+              validations={[Validator.required()]}
+            />,
+            <FormInput
+              name="Card code"
+              type="input"
+              validations={[Validator.required()]}
+            />,
+          ]}
+          />,
+          <FormPage inputs={[
+            <FormInput
+              name="Payment amount"
+              type="number"
+              validations={[Validator.required()]}
+            />,
+            <FormInput
+              name="Address"
+              type="text"
+              validations={[Validator.required()]}
+            />,
+            <FormInput
+              name="Card CVC"
+              type="input"
+              validations={[Validator.required()]}
+            />,
+          ]}
+          />,
+        ]}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 }
