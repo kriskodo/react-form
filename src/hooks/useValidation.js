@@ -1,98 +1,39 @@
-import { useCallback } from 'react';
-import adaptInputName from '../utils/adaptInputName';
+import { useCallback, useContext } from 'react';
+import { adaptInputName } from '../utils/data-adapter';
+import AppContext from '../context/context';
 
-const useValidation = (pages, setPages, setErrors, validations, currentPageNumber) => {
+const useValidation = (validations, currentPageNumber) => {
+  const {
+    pages, updateField, setErrors,
+  } = useContext(AppContext);
+
   const validate = useCallback((e) => {
-    setErrors([]);
     const inputNameKey = adaptInputName(e.target.name);
+    setErrors([]);
 
     validations.forEach((validation) => {
-      if (e.target.name === 'Repeat Password') {
-        const validationResult = validation(e.target, pages);
-        if (!validationResult.valid) {
-          setPages((prevPages) => ({
-            ...prevPages,
-            [currentPageNumber]: {
-              ...prevPages[currentPageNumber],
-              [inputNameKey]: {
-                ...prevPages[currentPageNumber][inputNameKey],
-                isValid: false,
-              },
-            },
-          }));
+      const validationResult = validation(e.target, pages);
 
-          setErrors((prevErrors) => [...prevErrors, validationResult.message]);
-          return;
-        }
+      console.log(validationResult);
+      if (!validationResult.valid) {
+        updateField(inputNameKey, { isValid: false });
 
-        setPages((prevPages) => ({
-          ...prevPages,
-          [currentPageNumber]: {
-            ...prevPages[currentPageNumber],
-            [inputNameKey]: {
-              ...prevPages[currentPageNumber][inputNameKey],
-              isValid: true,
-            },
-          },
-        }));
-
-        setErrors((prevErrors) => [
-          ...prevErrors.filter(
-            (errorMsg) => errorMsg === validationResult.message,
-          ),
-        ]);
-      } else {
-        const validationResult = validation(e.target);
-
-        if (!validationResult.valid) {
-          setPages((prevPages) => ({
-            ...prevPages,
-            [currentPageNumber]: {
-              ...prevPages[currentPageNumber],
-              [inputNameKey]: {
-                ...prevPages[currentPageNumber][inputNameKey],
-                isValid: false,
-              },
-            },
-          }));
-
-          setErrors((prevErrors) => [...prevErrors, validationResult.message]);
-          return;
-        }
-
-        setPages((prevPages) => ({
-          ...prevPages,
-          [currentPageNumber]: {
-            ...prevPages[currentPageNumber],
-            [inputNameKey]: {
-              ...prevPages[currentPageNumber][inputNameKey],
-              isValid: true,
-            },
-          },
-        }));
-
-        setErrors((prevErrors) => [
-          ...prevErrors.filter(
-            (errorMsg) => errorMsg === validationResult.message,
-          ),
-        ]);
+        setErrors((prevErrors) => [...prevErrors, validationResult.message]);
+        return;
       }
+
+      updateField(inputNameKey, { isValid: true });
+
+      setErrors((prevErrors) => [
+        ...prevErrors.filter(
+          (errorMsg) => errorMsg === validationResult.message,
+        ),
+      ]);
     });
-  }, [setErrors, validations, pages, setPages, currentPageNumber]);
+  }, [setErrors, validations, pages, updateField]);
 
   const onBlur = (e) => {
-    const inputNameKey = adaptInputName(e.target.name);
-
-    setPages((prevPages) => ({
-      ...prevPages,
-      [currentPageNumber]: {
-        ...prevPages[currentPageNumber],
-        [inputNameKey]: {
-          ...prevPages[currentPageNumber][inputNameKey],
-          isVisited: true,
-        },
-      },
-    }));
+    updateField(e.target.name, { isVisited: true });
 
     validate(e);
   };
@@ -100,21 +41,12 @@ const useValidation = (pages, setPages, setErrors, validations, currentPageNumbe
   const onChange = useCallback((e) => {
     const inputNameKey = adaptInputName(e.target.name);
 
-    setPages((prevPages) => ({
-      ...prevPages,
-      [currentPageNumber]: {
-        ...prevPages[currentPageNumber],
-        [inputNameKey]: {
-          ...prevPages[currentPageNumber][inputNameKey],
-          value: e.target.value,
-        },
-      },
-    }));
+    updateField(e.target.name, { value: e.target.value });
 
     if (pages[currentPageNumber][inputNameKey].isVisited) {
       validate(e);
     }
-  }, [currentPageNumber, pages, setPages, validate]);
+  }, [currentPageNumber, pages, updateField, validate]);
 
   return {
     onChange,

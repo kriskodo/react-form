@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import AppContext from './context/context';
 import useValidation from './hooks/useValidation';
-import adaptInputName from './utils/adaptInputName';
+import { adaptInputName } from './utils/data-adapter';
 
 function FormInput({
   id,
@@ -14,21 +14,10 @@ function FormInput({
 }) {
   const {
     pages,
-    setPages,
-    setErrors,
     currentPageNumber,
   } = useContext(AppContext);
 
-  const {
-    onChange,
-    onBlur,
-  } = useValidation(
-    pages,
-    setPages,
-    setErrors,
-    validations,
-    currentPageNumber,
-  );
+  const { onChange, onBlur } = useValidation(validations, currentPageNumber);
 
   const { isValid, isVisited } = pages[currentPageNumber][adaptInputName(name)];
 

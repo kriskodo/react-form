@@ -1,4 +1,4 @@
-import adaptInputName from '../utils/adaptInputName';
+import { adaptInputName } from '../utils/data-adapter';
 
 const getOriginalInputName = (value) => value.split('_')
   .map((str) => str[0].toUpperCase() + str.slice(1)).join(' ');

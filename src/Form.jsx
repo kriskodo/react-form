@@ -6,7 +6,7 @@ import { Alert, Col, Container } from 'react-bootstrap';
 import FormPage from './FormPage';
 import AppContext from './context/context';
 import './styles.css';
-import adaptPages from './utils/adaptInputPages';
+import { adaptInputName, adaptPages } from './utils/data-adapter';
 
 function Form({ pages: formPages, onSubmit }) {
   const [pages, setPages] = useState(adaptPages([...formPages]));
@@ -21,6 +21,21 @@ function Form({ pages: formPages, onSubmit }) {
     setCurrentPageNumber((page) => page - 1);
   }, []);
 
+  const updateField = useCallback((inputNameKey, updatedData) => {
+    const adaptedInputName = adaptInputName(inputNameKey);
+
+    setPages((prevPages) => ({
+      ...prevPages,
+      [currentPageNumber]: {
+        ...prevPages[currentPageNumber],
+        [adaptedInputName]: {
+          ...prevPages[currentPageNumber][adaptedInputName],
+          ...updatedData,
+        },
+      },
+    }));
+  }, [currentPageNumber]);
+
   const context = useMemo(() => ({
     pages,
     setPages,
@@ -31,8 +46,18 @@ function Form({ pages: formPages, onSubmit }) {
     setCurrentPageNumber,
     prevPage,
     nextPage,
+    updateField,
     handleSubmit: onSubmit,
-  }), [pages, errors, formPages.length, currentPageNumber, prevPage, nextPage, onSubmit]);
+  }), [
+    pages,
+    errors,
+    formPages.length,
+    currentPageNumber,
+    prevPage,
+    nextPage,
+    updateField,
+    onSubmit,
+  ]);
 
   return (
     <AppContext.Provider value={context}>
