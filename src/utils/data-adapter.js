@@ -21,6 +21,7 @@ export const adaptPages = (pagesArray) => pagesArray.reduce((acc, val, idx) => {
       value: '',
       isVisited: false,
       isValid: false,
+      error: '',
     };
   }
 

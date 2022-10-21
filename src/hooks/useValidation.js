@@ -4,33 +4,23 @@ import AppContext from '../context/context';
 
 const useValidation = (validations, currentPageNumber) => {
   const {
-    pages, updateField, setErrors,
+    pages, updateField,
   } = useContext(AppContext);
 
   const validate = useCallback((e) => {
     const inputNameKey = adaptInputName(e.target.name);
-    setErrors([]);
 
     validations.forEach((validation) => {
       const validationResult = validation(e.target, pages);
 
-      console.log(validationResult);
       if (!validationResult.valid) {
-        updateField(inputNameKey, { isValid: false });
-
-        setErrors((prevErrors) => [...prevErrors, validationResult.message]);
+        updateField(inputNameKey, { isValid: false, error: validationResult.message });
         return;
       }
 
-      updateField(inputNameKey, { isValid: true });
-
-      setErrors((prevErrors) => [
-        ...prevErrors.filter(
-          (errorMsg) => errorMsg === validationResult.message,
-        ),
-      ]);
+      updateField(inputNameKey, { isValid: true, error: '' });
     });
-  }, [setErrors, validations, pages, updateField]);
+  }, [validations, pages, updateField]);
 
   const onBlur = (e) => {
     updateField(e.target.name, { isVisited: true });

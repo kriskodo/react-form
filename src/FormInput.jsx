@@ -1,58 +1,60 @@
 import './styles.css';
 import { useContext } from 'react';
 import Form from 'react-bootstrap/Form';
+import { InputGroup } from 'react-bootstrap';
 import AppContext from './context/context';
 import useValidation from './hooks/useValidation';
-import { adaptInputName } from './utils/data-adapter';
 
 function FormInput({
   id,
-  type,
-  name,
   value,
-  validations,
+  props,
+  isValid,
+  isVisited,
+  error,
 }) {
   const {
-    pages,
     currentPageNumber,
   } = useContext(AppContext);
 
-  const { onChange, onBlur } = useValidation(validations, currentPageNumber);
-
-  const { isValid, isVisited } = pages[currentPageNumber][adaptInputName(name)];
+  const { onChange, onBlur } = useValidation(props.validations, currentPageNumber);
 
   return (
     <div className="form__input">
       <div className="form__label-wrapper">
-        {type !== 'country' && (
+        <InputGroup hasValidation>
+          {props.type !== 'country' && (
           <>
             <Form.Control
               id={id}
-              name={name}
-              type={type}
-              placeholder={name}
+              name={props.name}
+              type={props.type}
+              placeholder={props.name}
               value={value}
               isValid={isValid}
               isInvalid={!isValid && isVisited}
               onChange={onChange}
               onBlur={onBlur}
             />
+            <Form.Control.Feedback type="invalid">
+              {error}
+            </Form.Control.Feedback>
             <br />
           </>
-        )}
+          )}
 
-        {type === 'country' && (
+          {props.type === 'country' && (
           <Form.Select
             id="country"
-            name={name}
+            name={props.name}
             value={value}
             isValid={isValid}
             isInvalid={!isValid && isVisited}
-            placeholder={name}
+            placeholder={props.name}
             onChange={onChange}
             onBlur={onBlur}
           >
-            <option value="Afghanistan">Choose...</option>
+            <option value="Choose...">Choose...</option>
             <option value="Afghanistan">Afghanistan</option>
             <option value="Åland Islands">Åland Islands</option>
             <option value="Albania">Albania</option>
@@ -90,8 +92,9 @@ function FormInput({
             <option value="Zambia">Zambia</option>
             <option value="Zimbabwe">Zimbabwe</option>
           </Form.Select>
-        )}
-        <br />
+          )}
+          <br />
+        </InputGroup>
       </div>
     </div>
   );

@@ -14,9 +14,9 @@ function FormPage({
     prevPage,
     nextPage,
     errors,
-    setErrors,
-    handleSubmit,
     totalPages,
+    handleSubmit,
+    updateField,
   } = useContext(AppContext);
 
   const validatePage = () => {
@@ -30,6 +30,14 @@ function FormPage({
         const validationResult = validation({ name: inputName, value: inputValue }, pages);
 
         if (!validationResult.valid) {
+          updateField(
+            inputName,
+            {
+              isValid: false,
+              isVisited: true,
+              error: validationResult.message,
+            },
+          );
           accumulatedErrors.push(validationResult.message);
         }
       });
@@ -40,10 +48,13 @@ function FormPage({
 
   const validateSubmit = (e) => {
     e.preventDefault();
-    const foundErrors = validatePage(pages, pageNumber, errors);
-    setErrors(foundErrors);
+    const foundErrors = validatePage();
 
-    return handleSubmit(adaptResultPages(pages));
+    if (foundErrors.length === 0) {
+      return handleSubmit(adaptResultPages(pages));
+    }
+
+    return null;
   };
 
   const validateNext = () => {
@@ -51,15 +62,10 @@ function FormPage({
 
     if (foundErrors.length === 0) {
       nextPage();
-
-      return setErrors([]);
     }
-
-    return setErrors(foundErrors);
   };
 
   const handlePrevPage = () => {
-    setErrors([]);
     prevPage();
   };
 
@@ -86,7 +92,7 @@ function FormPage({
           <FormInput
             key={input.props.name}
             value={input.value}
-            {...input.props}
+            {...input}
           />
         ))}
       </div>
