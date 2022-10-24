@@ -1,8 +1,8 @@
-import Form from './Form';
-import FormPage from './FormPage';
-import FormInput from './FormInput';
-import './styles.css';
+import Form from '@Components/Form/Form';
+import FormPage from '@Components/Form/FormPage/';
+import FormInput from '@Components/Form/FormInput';
 import validator from './validation/validator';
+import './styles.css';
 
 export default function App() {
   const handleSubmit = (state) => {

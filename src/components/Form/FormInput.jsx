@@ -1,17 +1,12 @@
-import './styles.css';
 import { useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import { InputGroup } from 'react-bootstrap';
-import AppContext from './context/context';
-import useValidation from './hooks/useValidation';
+import AppContext from '@Context/context';
+import useValidation from '@Hooks/useValidation';
+import '@Src/styles.css';
 
 function FormInput({
-  id,
-  value,
-  props,
-  isValid,
-  isVisited,
-  error,
+  id, value, props, isValid, isVisited, error,
 }) {
   const {
     currentPageNumber,
@@ -20,7 +15,7 @@ function FormInput({
   const { onChange, onBlur } = useValidation(props.validations, currentPageNumber);
 
   return (
-    <div className="form__input">
+    <div className="form__input" style={{ marginBottom: '5px' }}>
       <div className="form__label-wrapper">
         <InputGroup hasValidation>
           {props.type !== 'country' && (

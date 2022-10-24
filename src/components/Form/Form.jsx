@@ -3,10 +3,10 @@ import { useCallback, useMemo, useState } from 'react';
 import { default as BootstrapForm } from 'react-bootstrap/Form';
 import { Container } from 'react-bootstrap';
 
-import FormPage from './FormPage';
-import AppContext from './context/context';
-import './styles.css';
-import { adaptInputName, adaptPages } from './utils/data-adapter';
+import { adaptInputName, adaptPages } from '@Utils/data-adapter';
+import FormPage from '@Components/Form/FormPage';
+import AppContext from '@Context/context';
+import '@Src/styles.css';
 
 function Form({ pages: formPages, onSubmit }) {
   const [pages, setPages] = useState(adaptPages([...formPages]));
