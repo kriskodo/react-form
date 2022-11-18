@@ -13,7 +13,6 @@ function FormPage({
     pages,
     prevPage,
     nextPage,
-    errors,
     totalPages,
     handleSubmit,
     updateField,
@@ -58,7 +57,7 @@ function FormPage({
   };
 
   const validateNext = () => {
-    const foundErrors = validatePage(pages, pageNumber, errors);
+    const foundErrors = validatePage();
 
     if (foundErrors.length === 0) {
       nextPage();

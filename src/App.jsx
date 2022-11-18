@@ -42,7 +42,7 @@ export default function App() {
           <FormPage
             title="Final bits"
             inputs={[
-              <FormInput name="Date of birth" type="date" validations={[Validator.dateOfBirth(new Date().getFullYear() - 18)]} />,
+              <FormInput name="Date of birth" type="date" validations={[Validator.dateOfBirth('2011-11-22')]} />,
               <FormInput name="Country" type="country" validations={[Validator.required()]} />,
             ]}
           />,

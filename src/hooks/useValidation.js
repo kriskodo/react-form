@@ -4,7 +4,8 @@ import AppContext from '../context/context';
 
 const useValidation = (validations, currentPageNumber) => {
   const {
-    pages, updateField,
+    pages,
+    updateField,
   } = useContext(AppContext);
 
   const validate = useCallback((e) => {

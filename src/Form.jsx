@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-// eslint-disable-next-line import/no-named-default
 import { default as BootstrapForm } from 'react-bootstrap/Form';
 import { Container } from 'react-bootstrap';
 
@@ -23,16 +22,17 @@ function Form({ pages: formPages, onSubmit }) {
   const updateField = useCallback((inputNameKey, updatedData) => {
     const adaptedInputName = adaptInputName(inputNameKey);
 
-    setPages((prevPages) => ({
-      ...prevPages,
-      [currentPageNumber]: {
-        ...prevPages[currentPageNumber],
-        [adaptedInputName]: {
-          ...prevPages[currentPageNumber][adaptedInputName],
-          ...updatedData,
-        },
-      },
-    }));
+    setPages((prevPages) => {
+      const beforeModificationValues = prevPages[currentPageNumber][adaptedInputName];
+      const copy = { ...prevPages };
+
+      copy[currentPageNumber][adaptedInputName] = {
+        ...beforeModificationValues,
+        ...updatedData,
+      };
+
+      return copy;
+    });
   }, [currentPageNumber]);
 
   const context = useMemo(() => ({

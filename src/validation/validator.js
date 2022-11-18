@@ -66,12 +66,19 @@ const validator = () => {
       message: 'Invalid phone number',
     });
   const dateOfBirth = (minDate) => (target) => {
-    const min = new Date(minDate);
+    const minimumDate = new Date(minDate);
     const chosen = new Date(target.value);
 
+    if (!target.value) {
+      return {
+        valid: false,
+        message: `${getOriginalInputName(target.name)} is required.`,
+      };
+    }
+
     return {
-      valid: min.getTime() < chosen.getTime(),
-      message: `You must be at least ${new Date().getFullYear() - minDate.year}
+      valid: minimumDate.getTime() < chosen.getTime(),
+      message: `You must be at least ${new Date().getFullYear() - minimumDate.getFullYear()}
        years old.`,
     };
   };
