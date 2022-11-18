@@ -3,9 +3,8 @@ import { default as BootstrapForm } from 'react-bootstrap/Form';
 import { Container } from 'react-bootstrap';
 
 import FormPage from './FormPage';
-import AppContext from './context/context';
-import './styles.css';
-import { adaptInputName, adaptPages } from './utils/data-adapter';
+import AppContext from '../../context/context';
+import { adaptInputName, adaptPages } from '../../utils/data-adapter';
 
 function Form({ pages: formPages, onSubmit }) {
   const [pages, setPages] = useState(adaptPages([...formPages]));

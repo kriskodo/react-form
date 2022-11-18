@@ -1,9 +1,8 @@
-import './styles.css';
 import { useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import { InputGroup } from 'react-bootstrap';
-import AppContext from './context/context';
-import useValidation from './hooks/useValidation';
+import AppContext from '../../context/context';
+import useValidation from '../../hooks/useValidation';
 
 function FormInput({
   id,
