@@ -2,8 +2,8 @@ import { useContext } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Button } from 'react-bootstrap';
 import FormInput from './FormInput';
-import AppContext from './context/context';
-import { adaptResultPages } from './utils/data-adapter';
+import AppContext from '../../context/context';
+import { adaptResultPages } from '../../utils/data-adapter';
 
 function FormPage({
   pageNumber,
@@ -25,6 +25,8 @@ function FormPage({
       const inputValue = pages[pageNumber][inputName].value;
       const { validations } = pages[pageNumber][inputName].props;
 
+      const inputErrors = [];
+
       validations.forEach((validation) => {
         const validationResult = validation({ name: inputName, value: inputValue }, pages);
 
@@ -34,12 +36,25 @@ function FormPage({
             {
               isValid: false,
               isVisited: true,
-              error: validationResult.message,
+              error: inputErrors.length === 0 ? validationResult.message : inputErrors[0],
             },
           );
+
+          inputErrors.push(validationResult.message);
           accumulatedErrors.push(validationResult.message);
         }
       });
+
+      if (inputErrors.length === 0) {
+        updateField(
+          inputName,
+          {
+            isValid: true,
+            isVisited: true,
+            error: '',
+          },
+        );
+      }
     });
 
     return accumulatedErrors;
@@ -60,8 +75,10 @@ function FormPage({
     const foundErrors = validatePage();
 
     if (foundErrors.length === 0) {
-      nextPage();
+      return nextPage();
     }
+
+    return null;
   };
 
   const handlePrevPage = () => {
